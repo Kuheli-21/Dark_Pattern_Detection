@@ -9,3 +9,5 @@ models/*.pt
 models/*.bin
 dataset/raw/
 dataset/screenshots/
+outputs
+a.txt
