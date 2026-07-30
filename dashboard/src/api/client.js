@@ -58,7 +58,7 @@ client.interceptors.response.use(
       error.code === 'ERR_NETWORK' ||
       error.code === 'ECONNREFUSED' ||
       error.code === 'ERR_CONNECTION_REFUSED' ||
-      [502, 503, 504].includes(error.response?.status);
+      [500, 502, 503, 504].includes(error.response?.status);
 
     if (isNetworkError) {
       console.warn('⚠️ [API Client] Backend unavailable or network error. Executing Auto-Mock Fallback:', originalRequest.url);
