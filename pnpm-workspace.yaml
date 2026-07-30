@@ -2,3 +2,5 @@ packages:
   - extension
   - dashboard
   - backend
+allowBuilds:
+  esbuild: true

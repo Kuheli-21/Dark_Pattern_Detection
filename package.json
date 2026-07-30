@@ -2,11 +2,11 @@
   "name": "darkpatterndetector",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint"
-  },
-  "devDependencies": {
-    "turbo": "^2"
+    "dev": "pnpm --filter dashboard dev",
+    "dev:dashboard": "pnpm --filter dashboard dev",
+    "dev:extension": "pnpm --filter extension dev",
+    "build": "pnpm --filter dashboard build && pnpm --filter extension build",
+    "build:dashboard": "pnpm --filter dashboard build",
+    "build:extension": "pnpm --filter extension build"
   }
 }
