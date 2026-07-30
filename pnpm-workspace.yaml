@@ -2,3 +2,6 @@ packages:
   - extension
   - dashboard
   - backend
+allowBuilds:
+  bcrypt: true
+  mongodb-memory-server: true
