@@ -13,17 +13,34 @@ export const WarningOverlay = ({ snippet, confidence = 0.95, patternType = 'dark
 
   const confidencePct = Math.round(confidence * 100);
 
+  const isHighConfidence = confidence >= 0.85;
+  const rgb = isHighConfidence ? '239, 68, 68' : '245, 158, 11';
+  const glowOpacity = confidence * 0.45;
+  const glowSize = 8 + confidence * 16;
+  const borderOpacity = 0.25 + confidence * 0.45;
+  const titleColor = isHighConfidence ? '#f87171' : '#fb923c';
+
+  const colors = {
+    border: `rgba(${rgb}, ${borderOpacity})`,
+    glow: `0 4px 30px rgba(0, 0, 0, 0.55), 0 0 ${glowSize}px rgba(${rgb}, ${glowOpacity})`,
+    badgeBg: `rgba(${rgb}, 0.15)`,
+    badgeText: isHighConfidence ? '#fca5a5' : '#fdba74',
+    badgeBorder: `rgba(${rgb}, 0.35)`,
+    titleColor,
+    emoji: isHighConfidence ? '🚨' : '⚠️'
+  };
+
   // Explicit inline styles to ensure 100% isolation from target page stylesheet
   const containerStyle = {
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
     marginTop: '6px',
     marginBottom: '6px',
     padding: '10px 14px',
-    background: 'rgba(13, 21, 39, 0.95)',
+    background: 'rgba(10, 17, 34, 0.96)',
     backdropFilter: 'blur(12px)',
-    border: '1px solid rgba(244, 63, 94, 0.6)',
+    border: colors.border,
     borderRadius: '10px',
-    boxShadow: '0 4px 20px rgba(244, 63, 94, 0.35)',
+    boxShadow: colors.glow,
     color: '#ffffff',
     fontSize: '13px',
     display: 'flex',
@@ -32,12 +49,13 @@ export const WarningOverlay = ({ snippet, confidence = 0.95, patternType = 'dark
     gap: '12px',
     maxWidth: '100%',
     zIndex: 999999,
+    transition: 'all 0.4s cubic-bezier(0.22, 1, 0.36, 1)'
   };
 
   const badgeStyle = {
-    background: 'rgba(244, 63, 94, 0.2)',
-    color: '#fda4af',
-    border: '1px solid rgba(244, 63, 94, 0.5)',
+    background: colors.badgeBg,
+    color: colors.badgeText,
+    border: colors.badgeBorder,
     padding: '2px 8px',
     borderRadius: '999px',
     fontSize: '11px',
@@ -55,16 +73,16 @@ export const WarningOverlay = ({ snippet, confidence = 0.95, patternType = 'dark
     fontSize: '11px',
     fontWeight: 600,
     cursor: 'pointer',
-    transition: 'all 0.2s ease',
+    transition: 'all 0.4s var(--ease-premium)',
   };
 
   return (
     <div style={containerStyle}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-        <span style={{ fontSize: '16px' }}>⚠️</span>
+        <span style={{ fontSize: '16px' }}>{colors.emoji}</span>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-            <span style={{ fontWeight: 700, color: '#f43f5e' }}>DARK PATTERN DETECTED</span>
+            <span style={{ fontWeight: 700, color: colors.titleColor }}>DARK PATTERN DETECTED</span>
             <span style={badgeStyle}>{patternType}</span>
             <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 600 }}>({confidencePct}% Confidence)</span>
           </div>

@@ -96,7 +96,18 @@ export const Overview = () => {
       </div>
 
       {/* Top Key Metrics Cards */}
-      <div
+      <motion.div
+        variants={{
+          hidden: { opacity: 0 },
+          show: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.08
+            }
+          }
+        }}
+        initial="hidden"
+        animate="show"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
@@ -105,17 +116,39 @@ export const Overview = () => {
         }}
       >
         <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 15 },
+            show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
+          }}
           whileHover={{ y: -6, scale: 1.02 }}
           className="glass-card"
-          style={{ position: 'relative', overflow: 'hidden' }}
+          style={{ 
+            position: 'relative', 
+            overflow: 'hidden',
+            border: '1px solid rgba(139, 92, 246, 0.15)',
+            boxShadow: '0 4px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(139, 92, 246, 0.05)'
+          }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', marginBottom: '1rem' }}>
             <span style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', fontWeight: 600 }}>TOTAL PAGES SCANNED</span>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(6, 182, 212, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(6, 182, 212, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Search size={20} color="#06b6d4" />
             </div>
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#ffffff', marginBottom: '0.4rem' }}>
+          <div 
+            className="gradient-text" 
+            style={{ 
+              fontSize: '2.75rem', 
+              fontWeight: 900, 
+              marginBottom: '0.4rem', 
+              fontFamily: 'var(--font-heading)', 
+              letterSpacing: '-0.03em',
+              display: 'inline-block',
+              background: 'linear-gradient(135deg, var(--accent-gradient-start) 0%, var(--accent-gradient-end) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
+          >
             {stats.totalScans.toLocaleString()}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#67e8f9' }}>
@@ -125,36 +158,80 @@ export const Overview = () => {
         </motion.div>
 
         <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 15 },
+            show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
+          }}
           whileHover={{ y: -6, scale: 1.02 }}
           className="glass-card"
-          style={{ border: '1px solid rgba(244, 63, 94, 0.3)', position: 'relative', overflow: 'hidden' }}
+          style={{ 
+            border: '1px solid rgba(239, 68, 68, 0.35)', 
+            position: 'relative', 
+            overflow: 'hidden',
+            boxShadow: '0 4px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(239, 68, 68, 0.1)'
+          }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', marginBottom: '1rem' }}>
             <span style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', fontWeight: 600 }}>FLAGGED DARK PATTERNS</span>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(244, 63, 94, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <AlertTriangle size={20} color="#f43f5e" />
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(239, 68, 68, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <AlertTriangle size={20} color="#f87171" />
             </div>
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#f43f5e', marginBottom: '0.4rem' }}>
+          <div 
+            className="gradient-text" 
+            style={{ 
+              fontSize: '2.75rem', 
+              fontWeight: 900, 
+              marginBottom: '0.4rem', 
+              fontFamily: 'var(--font-heading)', 
+              letterSpacing: '-0.03em',
+              display: 'inline-block',
+              background: 'linear-gradient(135deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
+          >
             {stats.totalDetections.toLocaleString()}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#fda4af' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#fca5a5' }}>
             <span className="cyber-badge badge-crimson">{detectionPercentage}% Detection Rate</span>
           </div>
         </motion.div>
 
         <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 15 },
+            show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
+          }}
           whileHover={{ y: -6, scale: 1.02 }}
           className="glass-card"
-          style={{ position: 'relative', overflow: 'hidden' }}
+          style={{ 
+            position: 'relative', 
+            overflow: 'hidden',
+            border: '1px solid rgba(16, 185, 129, 0.2)',
+            boxShadow: '0 4px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(16, 185, 129, 0.05)'
+          }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', marginBottom: '1rem' }}>
             <span style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', fontWeight: 600 }}>CLEAN PAGE SCANS</span>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(16, 185, 129, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(16, 185, 129, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <CheckCircle size={20} color="#10b981" />
             </div>
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#10b981', marginBottom: '0.4rem' }}>
+          <div 
+            className="gradient-text" 
+            style={{ 
+              fontSize: '2.75rem', 
+              fontWeight: 900, 
+              marginBottom: '0.4rem', 
+              fontFamily: 'var(--font-heading)', 
+              letterSpacing: '-0.03em',
+              display: 'inline-block',
+              background: 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
+          >
             {cleanScans.toLocaleString()}
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#6ee7b7' }}>
@@ -163,24 +240,46 @@ export const Overview = () => {
         </motion.div>
 
         <motion.div
+          variants={{
+            hidden: { opacity: 0, y: 15 },
+            show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
+          }}
           whileHover={{ y: -6, scale: 1.02 }}
           className="glass-card"
-          style={{ position: 'relative', overflow: 'hidden' }}
+          style={{ 
+            position: 'relative', 
+            overflow: 'hidden',
+            border: '1px solid rgba(239, 68, 68, 0.25)',
+            boxShadow: '0 4px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(239, 68, 68, 0.05)'
+          }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifycontent: 'space-between', marginBottom: '1rem' }}>
             <span style={{ fontSize: '0.825rem', color: 'var(--text-secondary)', fontWeight: 600 }}>HIGH RISK DOMAINS</span>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(139, 92, 246, 0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Globe size={20} color="#8b5cf6" />
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(239, 68, 68, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Globe size={20} color="#fca5a5" />
             </div>
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800, color: '#c4b5fd', marginBottom: '0.4rem' }}>
+          <div 
+            className="gradient-text" 
+            style={{ 
+              fontSize: '2.75rem', 
+              fontWeight: 900, 
+              marginBottom: '0.4rem', 
+              fontFamily: 'var(--font-heading)', 
+              letterSpacing: '-0.03em',
+              display: 'inline-block',
+              background: 'linear-gradient(135deg, var(--accent-danger-start) 0%, var(--accent-danger-end) 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
+          >
             10 Flagged
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#94a3b8' }}>
             <span>Top target: Temu & Booking.com</span>
           </div>
         </motion.div>
-      </div>
+      </motion.div>
 
       {/* Visualizers Grid */}
       <div
@@ -191,8 +290,19 @@ export const Overview = () => {
           marginBottom: '2rem',
         }}
       >
-        <TrendsLineChart />
-        <ScanRatioPieChart totalScans={stats.totalScans} totalDetections={stats.totalDetections} />
+        <div style={{ position: 'relative' }}>
+          <div style={{ position: 'absolute', top: '10%', left: '10%', right: '10%', bottom: '10%', background: 'radial-gradient(circle, rgba(124, 58, 237, 0.08) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0 }} />
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <TrendsLineChart />
+          </div>
+        </div>
+
+        <div style={{ position: 'relative' }}>
+          <div style={{ position: 'absolute', top: '10%', left: '10%', right: '10%', bottom: '10%', background: 'radial-gradient(circle, rgba(34, 211, 238, 0.08) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0 }} />
+          <div style={{ position: 'relative', zIndex: 1 }}>
+            <ScanRatioPieChart totalScans={stats.totalScans} totalDetections={stats.totalDetections} />
+          </div>
+        </div>
       </div>
 
       {/* Live Recent Threat Telemetry Feed */}

@@ -23,18 +23,19 @@ export const Navbar = () => {
         zIndex: 100,
         width: '100%',
         padding: '0.85rem 2rem',
-        background: 'rgba(7, 10, 19, 0.75)',
+        background: 'linear-gradient(90deg, rgba(7, 10, 19, 0.9) 0%, rgba(124, 58, 237, 0.04) 50%, rgba(34, 211, 238, 0.02) 100%)',
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(139, 92, 246, 0.2)',
+        borderBottom: '1px solid rgba(217, 70, 239, 0.25)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
+        boxShadow: '0 4px 30px rgba(0, 0, 0, 0.2), 0 1px 15px rgba(124, 58, 237, 0.08)'
       }}
     >
       {/* Brand / Logo */}
       <NavLink
-        to="/"
+        to="/overview"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -42,20 +43,22 @@ export const Navbar = () => {
           textDecoration: 'none',
         }}
       >
-        <div
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
           style={{
             width: '42px',
             height: '42px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)',
+            background: 'linear-gradient(135deg, var(--accent-gradient-start) 0%, var(--accent-gradient-mid) 50%, var(--accent-gradient-end) 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 0 15px rgba(139, 92, 246, 0.5)',
+            boxShadow: '0 0 15px rgba(217, 70, 239, 0.5)',
           }}
         >
           <Shield size={24} color="#ffffff" />
-        </div>
+        </motion.div>
         <div>
           <div
             style={{
@@ -87,7 +90,7 @@ export const Navbar = () => {
       {/* Navigation Links */}
       <nav style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
         <NavLink
-          to="/"
+          to="/overview"
           end
           style={({ isActive }) => ({
             display: 'flex',
@@ -98,11 +101,11 @@ export const Navbar = () => {
             textDecoration: 'none',
             fontSize: '0.9rem',
             fontWeight: 600,
-            transition: 'all 0.2s ease',
+            transition: 'all 0.4s var(--ease-premium)',
             color: isActive ? '#ffffff' : 'var(--text-secondary)',
-            background: isActive ? 'rgba(139, 92, 246, 0.2)' : 'transparent',
-            border: isActive ? '1px solid rgba(139, 92, 246, 0.4)' : '1px solid transparent',
-            boxShadow: isActive ? '0 0 12px rgba(139, 92, 246, 0.3)' : 'none',
+            background: isActive ? 'rgba(124, 58, 237, 0.12)' : 'transparent',
+            border: isActive ? '1px solid rgba(217, 70, 239, 0.35)' : '1px solid transparent',
+            boxShadow: isActive ? '0 0 15px rgba(217, 70, 239, 0.2), inset 0 0 8px rgba(34, 211, 238, 0.08)' : 'none',
           })}
         >
           <Activity size={18} />
@@ -120,11 +123,11 @@ export const Navbar = () => {
             textDecoration: 'none',
             fontSize: '0.9rem',
             fontWeight: 600,
-            transition: 'all 0.2s ease',
+            transition: 'all 0.4s var(--ease-premium)',
             color: isActive ? '#ffffff' : 'var(--text-secondary)',
-            background: isActive ? 'rgba(139, 92, 246, 0.2)' : 'transparent',
-            border: isActive ? '1px solid rgba(139, 92, 246, 0.4)' : '1px solid transparent',
-            boxShadow: isActive ? '0 0 12px rgba(139, 92, 246, 0.3)' : 'none',
+            background: isActive ? 'rgba(124, 58, 237, 0.12)' : 'transparent',
+            border: isActive ? '1px solid rgba(217, 70, 239, 0.35)' : '1px solid transparent',
+            boxShadow: isActive ? '0 0 15px rgba(217, 70, 239, 0.2), inset 0 0 8px rgba(34, 211, 238, 0.08)' : 'none',
           })}
         >
           <History size={18} />
@@ -142,11 +145,11 @@ export const Navbar = () => {
             textDecoration: 'none',
             fontSize: '0.9rem',
             fontWeight: 600,
-            transition: 'all 0.2s ease',
+            transition: 'all 0.4s var(--ease-premium)',
             color: isActive ? '#ffffff' : 'var(--text-secondary)',
-            background: isActive ? 'rgba(139, 92, 246, 0.2)' : 'transparent',
-            border: isActive ? '1px solid rgba(139, 92, 246, 0.4)' : '1px solid transparent',
-            boxShadow: isActive ? '0 0 12px rgba(139, 92, 246, 0.3)' : 'none',
+            background: isActive ? 'rgba(124, 58, 237, 0.12)' : 'transparent',
+            border: isActive ? '1px solid rgba(217, 70, 239, 0.35)' : '1px solid transparent',
+            boxShadow: isActive ? '0 0 15px rgba(217, 70, 239, 0.2), inset 0 0 8px rgba(34, 211, 238, 0.08)' : 'none',
           })}
         >
           <Award size={18} />
@@ -173,7 +176,7 @@ export const Navbar = () => {
               width: '24px',
               height: '24px',
               borderRadius: '50%',
-              background: '#8b5cf6',
+              background: 'var(--accent-gradient)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

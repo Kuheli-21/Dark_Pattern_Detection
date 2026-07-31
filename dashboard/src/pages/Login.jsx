@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Shield, Lock, Mail, ArrowRight, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const SceneRoot = React.lazy(() => import('../components/landing/SceneRoot'));
 
 export const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -11,11 +13,38 @@ export const Login = () => {
   const [loading, setLoading] = useState(false);
   const [errMessage, setErrMessage] = useState('');
 
-  const { login, signup } = useAuth();
+  const { user, login, signup } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || '/overview';
+
+  const [isMobile, setIsMobile] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 960);
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mediaQuery.matches);
+    const motionListener = (e) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener('change', motionListener);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      mediaQuery.removeEventListener('change', motionListener);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      navigate(from, { replace: true });
+    }
+  }, [user, navigate, from]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -56,41 +85,69 @@ export const Login = () => {
   };
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem 1rem',
-        position: 'relative',
-        zIndex: 1,
-      }}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 20, scale: 0.98 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="glass-panel"
+    <>
+      {/* Noise background grain */}
+      <div className="landing-noise-overlay" />
+
+      {/* Scaled lightweight 3D canvas (Hero view Mascot only) */}
+      {!reducedMotion && (
+        <Suspense fallback={null}>
+          <SceneRoot isLoginMode={true} />
+        </Suspense>
+      )}
+
+      <div
         style={{
-          width: '100%',
-          maxWidth: '460px',
-          padding: '2.5rem 2rem',
+          minHeight: '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '2rem 1rem',
           position: 'relative',
-          overflow: 'hidden',
+          zIndex: 10,
         }}
       >
-        {/* Top Glow Accent Bar */}
-        <div
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            height: '4px',
-            background: 'linear-gradient(90deg, #8b5cf6, #06b6d4, #f43f5e)',
+        <div 
+          style={{ 
+            maxWidth: '1200px', 
+            width: '100%', 
+            display: 'grid', 
+            gridTemplateColumns: isMobile ? '1fr' : '1.2fr 1fr', 
+            gap: isMobile ? '2rem' : '4rem', 
+            alignItems: 'center' 
           }}
-        />
+        >
+          {/* Left Column Spacer (Mascot sits here on desktop WebGL) */}
+          <div style={{ height: isMobile ? '0px' : '400px', pointerEvents: 'none' }} />
+
+          {/* Right Column: Form Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="glass-panel"
+            style={{
+              width: '100%',
+              maxWidth: '460px',
+              padding: '2.5rem 2rem',
+              position: 'relative',
+              overflow: 'hidden',
+              background: 'linear-gradient(135deg, rgba(10, 17, 34, 0.92) 0%, rgba(124, 58, 237, 0.05) 100%)',
+              border: '1px solid rgba(217, 70, 239, 0.25)',
+              boxShadow: '0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(217, 70, 239, 0.1)',
+            }}
+          >
+            {/* Top Glow Accent Bar */}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: '4px',
+                background: 'var(--accent-gradient)',
+              }}
+            />
 
         {/* Brand Header */}
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -99,12 +156,12 @@ export const Login = () => {
               width: '56px',
               height: '56px',
               borderRadius: '16px',
-              background: 'linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)',
+              background: 'var(--accent-gradient)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 1.25rem',
-              boxShadow: '0 0 25px rgba(139, 92, 246, 0.6)',
+              boxShadow: '0 0 25px rgba(217, 70, 239, 0.4)',
             }}
           >
             <Shield size={32} color="#ffffff" />
@@ -301,7 +358,15 @@ export const Login = () => {
             type="submit"
             disabled={loading}
             className="cyber-button"
-            style={{ width: '100%', padding: '0.85rem', marginTop: '0.5rem' }}
+            style={{ 
+              width: '100%', 
+              padding: '0.85rem', 
+              marginTop: '0.5rem',
+              background: 'linear-gradient(135deg, var(--accent-gradient-start) 0%, var(--accent-gradient-mid) 50%, var(--accent-gradient-end) 100%)',
+              backgroundSize: '200% auto',
+              animation: 'gradient-shift 6s linear infinite',
+              border: '1px solid rgba(255, 255, 255, 0.2)'
+            }}
           >
             {loading ? (
               'Authenticating...'
@@ -323,8 +388,8 @@ export const Login = () => {
             style={{
               width: '100%',
               padding: '0.65rem',
-              background: 'rgba(6, 182, 212, 0.1)',
-              border: '1px solid rgba(6, 182, 212, 0.3)',
+              background: 'rgba(6, 182, 212, 0.06)',
+              border: '1px solid rgba(6, 182, 212, 0.2)',
               borderRadius: '10px',
               color: '#67e8f9',
               fontSize: '0.85rem',
@@ -342,6 +407,8 @@ export const Login = () => {
           </button>
         </div>
       </motion.div>
-    </div>
+        </div>
+      </div>
+    </>
   );
 };

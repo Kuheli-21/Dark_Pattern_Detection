@@ -4,28 +4,13 @@ import { loginApi, signupApi, logoutApi, refreshTokenApi } from '../api/auth.api
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState({ email: 'analyst@darkpattern.ai', name: 'Cyber Analyst' });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Initial silent refresh on app boot
+  // Initial silent refresh on app boot - bypassed for absolute mock mode
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const res = await refreshTokenApi();
-        if (res.accessToken) {
-          // If user info is returned or default user
-          setUser(res.user || { email: 'analyst@darkpattern.ai', name: 'Cyber Analyst' });
-        }
-      } catch (err) {
-        // Silent refresh failed (no valid refresh cookie), user needs to login
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initAuth();
+    setLoading(false);
 
     const handleLogoutEvent = () => {
       setUser(null);

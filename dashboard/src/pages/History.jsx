@@ -14,6 +14,51 @@ import {
   Info,
 } from 'lucide-react';
 
+const CATEGORIES_LIST = [
+  'Confirmshaming',
+  'Sneak into Basket',
+  'Fake Scarcity',
+  'Subscription Trap',
+  'Hidden Costs',
+  'Bait and Switch',
+  'Fake Social Proof',
+  'Nagging',
+  'Preselection',
+  'Forced Action'
+];
+
+const getCategoryForSnippet = (snippet) => {
+  const lower = snippet?.toLowerCase() || '';
+  if (lower.includes('risk') || lower.includes('no thanks') || lower.includes('prefer')) {
+    return { name: 'Confirmshaming', color: 'var(--cat-1)' };
+  }
+  if (lower.includes('warranty') || lower.includes('basket') || lower.includes('add')) {
+    return { name: 'Sneak into Basket', color: 'var(--cat-2)' };
+  }
+  if (lower.includes('left') || lower.includes('stock') || lower.includes('hurry')) {
+    return { name: 'Fake Scarcity', color: 'var(--cat-3)' };
+  }
+  if (lower.includes('bill') || lower.includes('recur') || lower.includes('subscribe') || lower.includes('try free')) {
+    return { name: 'Subscription Trap', color: 'var(--cat-4)' };
+  }
+  if (lower.includes('fee') || lower.includes('charge') || lower.includes('processing')) {
+    return { name: 'Hidden Costs', color: 'var(--cat-5)' };
+  }
+  if (lower.includes('close') || lower.includes('switch') || lower.includes('bait')) {
+    return { name: 'Bait and Switch', color: 'var(--cat-6)' };
+  }
+  if (lower.includes('other people') || lower.includes('shoppers') || lower.includes('social proof') || lower.includes('looking at')) {
+    return { name: 'Fake Social Proof', color: 'var(--cat-7)' };
+  }
+  if (lower.includes('popup') || lower.includes('nag')) {
+    return { name: 'Nagging', color: 'var(--cat-8)' };
+  }
+  if (lower.includes('preselected') || lower.includes('default') || lower.includes('pre-ticked')) {
+    return { name: 'Preselection', color: 'var(--cat-9)' };
+  }
+  return { name: 'Forced Action', color: 'var(--cat-10)' };
+};
+
 export const History = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -99,48 +144,84 @@ export const History = () => {
           padding: '1.25rem',
           marginBottom: '1.5rem',
           display: 'flex',
-          alignItems: 'center',
+          flexDirection: 'column',
           gap: '1rem',
-          flexWrap: 'wrap',
         }}
       >
-        <form onSubmit={handleSearchSubmit} style={{ flex: 1, minWidth: '240px', position: 'relative' }}>
-          <Search
-            size={18}
-            style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}
-          />
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search by domain (e.g. amazon.com)..."
-            className="cyber-input"
-            style={{ paddingLeft: '2.75rem' }}
-          />
-        </form>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexWrap: 'wrap', width: '100%' }}>
+          <form onSubmit={handleSearchSubmit} style={{ flex: 1, minWidth: '240px', position: 'relative' }}>
+            <Search
+              size={18}
+              style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}
+            />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Search by domain (e.g. amazon.com)..."
+              className="cyber-input"
+              style={{ paddingLeft: '2.75rem' }}
+            />
+          </form>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Filter size={18} color="#8b5cf6" />
-          <select
-            value={patternFilter}
-            onChange={(e) => updateParam('patternType', e.target.value)}
-            className="cyber-input"
-            style={{ width: '180px', padding: '0.75rem', cursor: 'pointer' }}
-          >
-            <option value="">All Pattern Types</option>
-            <option value="dark-pattern">Dark Pattern (Binary)</option>
-          </select>
+          {(domainFilter || patternFilter) && (
+            <button
+              onClick={handleClearFilters}
+              className="cyber-button-outline"
+              style={{ padding: '0.75rem 1rem', fontSize: '0.85rem' }}
+            >
+              <X size={16} /> Clear Filters
+            </button>
+          )}
         </div>
 
-        {(domainFilter || patternFilter) && (
+        {/* Category Pills Filters */}
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginRight: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 700 }}>
+            <Filter size={14} color="var(--accent-purple)" /> FILTER BY TAXONOMY:
+          </div>
           <button
-            onClick={handleClearFilters}
-            className="cyber-button-outline"
-            style={{ padding: '0.75rem 1rem', fontSize: '0.85rem' }}
+            onClick={() => updateParam('patternType', '')}
+            style={{
+              padding: '0.4rem 0.85rem',
+              fontSize: '0.75rem',
+              borderRadius: '9999px',
+              border: !patternFilter ? '1px solid rgba(255, 255, 255, 0.2)' : '1px solid rgba(255, 255, 255, 0.08)',
+              background: !patternFilter ? 'linear-gradient(135deg, var(--accent-gradient-start) 0%, var(--accent-gradient-end) 100%)' : 'rgba(7, 10, 19, 0.4)',
+              boxShadow: !patternFilter ? '0 0 12px rgba(217, 70, 239, 0.2)' : 'none',
+              color: !patternFilter ? '#ffffff' : 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontWeight: 600,
+              transition: 'all 0.2s ease'
+            }}
           >
-            <X size={16} /> Clear Filters
+            All Categories
           </button>
-        )}
+          {CATEGORIES_LIST.map((catName, idx) => {
+            const isActive = patternFilter === catName;
+            const catColor = `var(--cat-${idx + 1})`;
+            return (
+              <button
+                key={catName}
+                onClick={() => updateParam('patternType', catName)}
+                style={{
+                  padding: '0.4rem 0.85rem',
+                  fontSize: '0.75rem',
+                  borderRadius: '9999px',
+                  border: isActive ? `1px solid ${catColor}` : '1px solid rgba(255, 255, 255, 0.08)',
+                  background: isActive ? `${catColor}20` : 'rgba(7, 10, 19, 0.4)',
+                  boxShadow: isActive ? `0 0 12px ${catColor}33` : 'none',
+                  color: isActive ? '#ffffff' : 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  transition: 'all 0.2s ease'
+                }}
+              >
+                {catName}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Cyberpunk Table */}
@@ -189,9 +270,12 @@ export const History = () => {
                   style={{
                     borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
                     cursor: 'pointer',
-                    transition: 'background 0.2s ease',
+                    transition: 'background 0.4s var(--ease-premium)',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(139, 92, 246, 0.08)')}
+                  onMouseEnter={(e) => {
+                    const cat = getCategoryForSnippet(item.snippet);
+                    e.currentTarget.style.background = `${cat.color}0c`;
+                  }}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
                   <td style={{ padding: '1rem 1.25rem', maxWidth: '380px' }}>
@@ -212,7 +296,22 @@ export const History = () => {
                     {item.domain}
                   </td>
                   <td style={{ padding: '1rem 1.25rem' }}>
-                    <span className="cyber-badge badge-crimson">dark-pattern</span>
+                    {(() => {
+                      const cat = getCategoryForSnippet(item.snippet);
+                      return (
+                        <span 
+                          className="cyber-badge"
+                          style={{
+                            background: `${cat.color}15`,
+                            border: `1px solid ${cat.color}`,
+                            color: cat.color,
+                            boxShadow: `0 0 10px ${cat.color}22`
+                          }}
+                        >
+                          {cat.name}
+                        </span>
+                      );
+                    })()}
                   </td>
                   <td style={{ padding: '1rem 1.25rem', fontWeight: 700, color: '#f43f5e' }}>
                     {((item.confidence || 0.95) * 100).toFixed(0)}%

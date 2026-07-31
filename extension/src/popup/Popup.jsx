@@ -1,6 +1,38 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, ShieldAlert, CheckCircle2, ExternalLink, RefreshCw, AlertTriangle, Eye } from 'lucide-react';
 
+const getCategoryForSnippet = (snippet) => {
+  const lower = snippet?.toLowerCase() || '';
+  if (lower.includes('risk') || lower.includes('no thanks') || lower.includes('prefer')) {
+    return { name: 'Confirmshaming', color: '#fda4af' };
+  }
+  if (lower.includes('warranty') || lower.includes('basket') || lower.includes('add')) {
+    return { name: 'Sneak into Basket', color: '#fdba74' };
+  }
+  if (lower.includes('left') || lower.includes('stock') || lower.includes('hurry')) {
+    return { name: 'Fake Scarcity', color: '#fcd34d' };
+  }
+  if (lower.includes('bill') || lower.includes('recur') || lower.includes('subscribe') || lower.includes('try free')) {
+    return { name: 'Subscription Trap', color: '#86efac' };
+  }
+  if (lower.includes('fee') || lower.includes('charge') || lower.includes('processing')) {
+    return { name: 'Hidden Costs', color: '#67e8f9' };
+  }
+  if (lower.includes('close') || lower.includes('switch') || lower.includes('bait')) {
+    return { name: 'Bait and Switch', color: '#93c5fd' };
+  }
+  if (lower.includes('other people') || lower.includes('shoppers') || lower.includes('social proof') || lower.includes('looking at')) {
+    return { name: 'Fake Social Proof', color: '#c084fc' };
+  }
+  if (lower.includes('popup') || lower.includes('nag')) {
+    return { name: 'Nagging', color: '#f472b6' };
+  }
+  if (lower.includes('preselected') || lower.includes('default') || lower.includes('pre-ticked')) {
+    return { name: 'Preselection', color: '#fb7185' };
+  }
+  return { name: 'Forced Action', color: '#fb923c' };
+};
+
 export default function Popup() {
   const [scannerEnabled, setScannerEnabled] = useState(true);
   const [scanData, setScanData] = useState(null);
@@ -63,29 +95,31 @@ export default function Popup() {
   const flaggedItems = scanData?.results?.filter((r) => r.isDarkPattern) || [];
   const riskScore = scanData?.websiteRiskScore || 0;
   const isHighRisk = riskScore >= 70;
+  const riskColor = isHighRisk ? '#ef4444' : '#10b981';
+  const riskGlow = isHighRisk ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.2)';
 
   return (
-    <div className="popup-container">
+    <div className="popup-container" style={{ background: 'linear-gradient(180deg, #070a13 0%, #0a0e1a 100%)' }}>
       {/* Header */}
-      <div className="popup-header">
+      <div className="popup-header" style={{ borderBottom: '1px solid rgba(217, 70, 239, 0.2)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
           <div
             style={{
               width: '32px',
               height: '32px',
               borderRadius: '8px',
-              background: 'linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%)',
+              background: 'linear-gradient(135deg, var(--accent-gradient-start, #7c3aed) 0%, var(--accent-gradient-end, #22d3ee) 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 10px rgba(139, 92, 246, 0.5)',
+              boxShadow: '0 0 10px rgba(217, 70, 239, 0.4)',
             }}
           >
             <Shield size={18} color="#fff" />
           </div>
           <div>
             <div style={{ fontFamily: 'Outfit', fontWeight: 800, fontSize: '0.95rem', color: '#fff' }}>
-              DARK PATTERN <span style={{ color: '#8b5cf6' }}>DETECTOR</span>
+              DARK PATTERN <span className="gradient-text">DETECTOR</span>
             </div>
             <div style={{ fontSize: '0.65rem', color: '#94a3b8', letterSpacing: '0.05em' }}>
               MV3 DOM SHADOW SENTINEL
@@ -107,10 +141,18 @@ export default function Popup() {
       {/* Main Body */}
       <div className="popup-content">
         {/* Domain Risk Meter Card */}
-        <div className="popup-card">
+        <div 
+          className="popup-card" 
+          style={{ 
+            background: 'rgba(10, 17, 34, 0.8)',
+            border: `1px solid ${riskColor}40`,
+            boxShadow: `0 4px 15px rgba(0, 0, 0, 0.35), 0 0 10px ${riskGlow}`,
+            padding: '0.85rem'
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
             <div>
-              <div style={{ fontSize: '0.7rem', color: '#94a3b8', uppercase: true }}>CURRENT TARGET DOMAIN</div>
+              <div style={{ fontSize: '0.65rem', color: '#94a3b8', textTransform: 'uppercase', fontWeight: 700 }}>CURRENT TARGET DOMAIN</div>
               <div style={{ fontWeight: 800, fontSize: '1rem', color: '#ffffff' }}>
                 {scanData?.domain || 'Scanning active tab...'}
               </div>
@@ -121,9 +163,9 @@ export default function Popup() {
                 borderRadius: '999px',
                 fontSize: '0.7rem',
                 fontWeight: 700,
-                background: isHighRisk ? 'rgba(244, 63, 94, 0.2)' : 'rgba(16, 185, 129, 0.2)',
-                color: isHighRisk ? '#fda4af' : '#6ee7b7',
-                border: `1px solid ${isHighRisk ? '#f43f5e' : '#10b981'}`,
+                background: isHighRisk ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)',
+                color: isHighRisk ? '#fca5a5' : '#a7f3d0',
+                border: `1px solid ${riskColor}60`,
               }}
             >
               {isHighRisk ? 'HIGH RISK' : 'LOW RISK'}
@@ -134,7 +176,7 @@ export default function Popup() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', marginBottom: '0.3rem' }}>
               <span style={{ color: '#cbd5e1' }}>Website Risk Score</span>
-              <span style={{ fontWeight: 800, color: isHighRisk ? '#f43f5e' : '#10b981' }}>
+              <span style={{ fontWeight: 800, color: isHighRisk ? '#fda4af' : '#6ee7b7' }}>
                 {riskScore.toFixed(1)} / 100
               </span>
             </div>
@@ -143,7 +185,7 @@ export default function Popup() {
                 width: '100%',
                 height: '6px',
                 borderRadius: '3px',
-                background: 'rgba(255, 255, 255, 0.1)',
+                background: 'rgba(255, 255, 255, 0.08)',
                 overflow: 'hidden',
               }}
             >
@@ -152,9 +194,9 @@ export default function Popup() {
                   width: `${Math.min(100, riskScore)}%`,
                   height: '100%',
                   background: isHighRisk
-                    ? 'linear-gradient(90deg, #f43f5e, #e11d48)'
-                    : 'linear-gradient(90deg, #10b981, #059669)',
-                  boxShadow: `0 0 8px ${isHighRisk ? '#f43f5e' : '#10b981'}`,
+                    ? 'linear-gradient(90deg, var(--accent-danger-start, #ef4444), var(--accent-danger-end, #f43f5e))'
+                    : 'linear-gradient(90deg, #10b981, #06b6d4)',
+                  boxShadow: `0 0 8px ${riskColor}`,
                   transition: 'width 0.4s ease',
                 }}
               />
@@ -163,10 +205,10 @@ export default function Popup() {
         </div>
 
         {/* Flagged Snippets Section */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', marginTop: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
             <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#e2e8f0', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-              <ShieldAlert size={15} color={flaggedItems.length > 0 ? '#f43f5e' : '#10b981'} />
+              <ShieldAlert size={15} color={flaggedItems.length > 0 ? '#f87171' : '#10b981'} />
               Flagged Deceptions ({flaggedItems.length})
             </span>
 
@@ -176,7 +218,7 @@ export default function Popup() {
               style={{
                 background: 'none',
                 border: 'none',
-                color: '#8b5cf6',
+                color: 'var(--accent-cyan, #06b6d4)',
                 fontSize: '0.75rem',
                 cursor: 'pointer',
                 display: 'flex',
@@ -197,38 +239,43 @@ export default function Popup() {
               display: 'flex',
               flexDirection: 'column',
               gap: '0.5rem',
+              paddingRight: '4px'
             }}
           >
             {flaggedItems.length > 0 ? (
-              flaggedItems.map((item, idx) => (
-                <div
-                  key={idx}
-                  style={{
-                    padding: '0.6rem 0.8rem',
-                    background: 'rgba(244, 63, 94, 0.1)',
-                    border: '1px solid rgba(244, 63, 94, 0.3)',
-                    borderRadius: '8px',
-                    fontSize: '0.75rem',
-                  }}
-                >
-                  <div style={{ fontWeight: 600, color: '#ffffff', marginBottom: '0.2rem' }}>
-                    "{item.snippet}"
+              flaggedItems.map((item, idx) => {
+                const cat = getCategoryForSnippet(item.snippet);
+                return (
+                  <div
+                    key={idx}
+                    style={{
+                      padding: '0.6rem 0.8rem',
+                      background: `${cat.color}10`,
+                      border: `1px solid ${cat.color}35`,
+                      borderRadius: '8px',
+                      fontSize: '0.75rem',
+                      boxShadow: `inset 0 0 6px ${cat.color}05`
+                    }}
+                  >
+                    <div style={{ fontWeight: 600, color: '#ffffff', marginBottom: '0.2rem', lineHeight: 1.35 }}>
+                      "{item.snippet}"
+                    </div>
+                    <div style={{ color: cat.color, fontSize: '0.65rem', display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
+                      <span>Pattern: {cat.name}</span>
+                      <span>{Math.round((item.confidence || 0.95) * 100)}% Match</span>
+                    </div>
                   </div>
-                  <div style={{ color: '#fda4af', fontSize: '0.65rem', display: 'flex', justifyContent: 'space-between' }}>
-                    <span>Pattern: dark-pattern</span>
-                    <span>{Math.round((item.confidence || 0.95) * 100)}% Match</span>
-                  </div>
-                </div>
-              ))
+                );
+              })
             ) : (
               <div
                 style={{
                   padding: '1.5rem',
                   textAlign: 'center',
-                  background: 'rgba(16, 185, 129, 0.08)',
-                  border: '1px solid rgba(16, 185, 129, 0.2)',
+                  background: 'rgba(16, 185, 129, 0.05)',
+                  border: '1px solid rgba(16, 185, 129, 0.15)',
                   borderRadius: '10px',
-                  color: '#6ee7b7',
+                  color: '#a7f3d0',
                   fontSize: '0.8rem',
                   display: 'flex',
                   flexDirection: 'column',
@@ -249,7 +296,9 @@ export default function Popup() {
           style={{
             width: '100%',
             padding: '0.75rem',
-            background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+            background: 'linear-gradient(135deg, var(--accent-gradient-start, #7c3aed) 0%, var(--accent-gradient-end, #22d3ee) 100%)',
+            backgroundSize: '200% auto',
+            animation: 'gradient-shift 6s linear infinite',
             border: '1px solid rgba(255, 255, 255, 0.2)',
             borderRadius: '10px',
             color: '#ffffff',
@@ -260,7 +309,9 @@ export default function Popup() {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '0.5rem',
-            boxShadow: '0 4px 14px rgba(139, 92, 246, 0.4)',
+            boxShadow: '0 4px 15px rgba(217, 70, 239, 0.35)',
+            marginTop: '0.75rem',
+            fontFamily: 'Outfit, sans-serif'
           }}
         >
           Open Security Dashboard <ExternalLink size={15} />

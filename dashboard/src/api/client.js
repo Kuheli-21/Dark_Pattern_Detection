@@ -276,6 +276,38 @@ const MOCK_WEBSITE_SCORES = [
   { domain: 'ticketmaster.com', riskScore: 54.0, totalScans: 890, totalDetections: 98 }
 ];
 
+const getCategoryForSnippet = (snippet) => {
+  const lower = snippet?.toLowerCase() || '';
+  if (lower.includes('risk') || lower.includes('no thanks') || lower.includes('prefer')) {
+    return { name: 'Confirmshaming', color: 'var(--cat-1)' };
+  }
+  if (lower.includes('warranty') || lower.includes('basket') || lower.includes('add')) {
+    return { name: 'Sneak into Basket', color: 'var(--cat-2)' };
+  }
+  if (lower.includes('left') || lower.includes('stock') || lower.includes('hurry')) {
+    return { name: 'Fake Scarcity', color: 'var(--cat-3)' };
+  }
+  if (lower.includes('bill') || lower.includes('recur') || lower.includes('subscribe') || lower.includes('try free')) {
+    return { name: 'Subscription Trap', color: 'var(--cat-4)' };
+  }
+  if (lower.includes('fee') || lower.includes('charge') || lower.includes('processing')) {
+    return { name: 'Hidden Costs', color: 'var(--cat-5)' };
+  }
+  if (lower.includes('close') || lower.includes('switch') || lower.includes('bait')) {
+    return { name: 'Bait and Switch', color: 'var(--cat-6)' };
+  }
+  if (lower.includes('other people') || lower.includes('shoppers') || lower.includes('social proof') || lower.includes('looking at')) {
+    return { name: 'Fake Social Proof', color: 'var(--cat-7)' };
+  }
+  if (lower.includes('popup') || lower.includes('nag')) {
+    return { name: 'Nagging', color: 'var(--cat-8)' };
+  }
+  if (lower.includes('preselected') || lower.includes('default') || lower.includes('pre-ticked')) {
+    return { name: 'Preselection', color: 'var(--cat-9)' };
+  }
+  return { name: 'Forced Action', color: 'var(--cat-10)' };
+};
+
 async function handleMockFallback(config) {
   const url = config.url || '';
   const params = config.params || {};
@@ -370,7 +402,10 @@ async function handleMockFallback(config) {
       );
     }
     if (params.patternType) {
-      filtered = filtered.filter((item) => item.patternType === params.patternType);
+      filtered = filtered.filter((item) => {
+        const cat = getCategoryForSnippet(item.snippet);
+        return cat.name === params.patternType;
+      });
     }
 
     const page = parseInt(params.page || '1', 10);
