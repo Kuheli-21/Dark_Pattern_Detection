@@ -17,7 +17,7 @@ class AiServiceError extends Error {
  */
 const predict = async (textSnippets) => {
   const targetUrl = `${env.AI_SERVICE_URL}/predict`;
-  const payload = { textSnippets };
+  const payload = { snippets: textSnippets };
 
   const attemptRequest = async () => {
     return await axios.post(targetUrl, payload, {
@@ -28,14 +28,28 @@ const predict = async (textSnippets) => {
     });
   };
 
+  const formatResponse = (responseData) => {
+    if (responseData && Array.isArray(responseData.results)) {
+      return {
+        predictions: responseData.results.map((item) => ({
+          text: item.snippet,
+          isDarkPattern: item.isDarkPattern,
+          patternType: item.patternType,
+          confidence: item.confidence,
+        })),
+      };
+    }
+    return responseData;
+  };
+
   try {
     const response = await attemptRequest();
-    return response.data;
+    return formatResponse(response.data);
   } catch (firstError) {
     logger.warn(`AI service request failed (attempt 1): ${firstError.message}. Retrying once...`);
     try {
       const retryResponse = await attemptRequest();
-      return retryResponse.data;
+      return formatResponse(retryResponse.data);
     } catch (retryError) {
       logger.error(`AI service request failed after retry: ${retryError.message}`);
       throw new AiServiceError(
