@@ -39,11 +39,14 @@ export default function Popup() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load stored scan results for current tab
+    // Load stored scan results and scanner configuration
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-      chrome.storage.local.get(['activeScan'], (result) => {
+      chrome.storage.local.get(['activeScan', 'scannerEnabled'], (result) => {
         if (result.activeScan) {
           setScanData(result.activeScan);
+        }
+        if (result.scannerEnabled !== undefined) {
+          setScannerEnabled(result.scannerEnabled);
         }
         setLoading(false);
       });
@@ -63,6 +66,21 @@ export default function Popup() {
       setLoading(false);
     }
   }, []);
+
+  const handleToggleScanner = (checked) => {
+    setScannerEnabled(checked);
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.set({ scannerEnabled: checked });
+      // Clear badge immediately when disabling
+      if (!checked && chrome.action) {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          if (tabs[0]) {
+            chrome.action.setBadgeText({ text: '', tabId: tabs[0].id });
+          }
+        });
+      }
+    }
+  };
 
   const handleRescan = () => {
     setLoading(true);
@@ -132,7 +150,7 @@ export default function Popup() {
           <input
             type="checkbox"
             checked={scannerEnabled}
-            onChange={(e) => setScannerEnabled(e.target.checked)}
+            onChange={(e) => handleToggleScanner(e.target.checked)}
           />
           <span className="slider"></span>
         </label>

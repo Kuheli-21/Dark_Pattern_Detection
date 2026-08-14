@@ -69,30 +69,49 @@ function runDOMScan() {
     return;
   }
   
-  const { textSnippets, textNodeMap } = extractPageTextSnippets();
-
-  if (textSnippets.length === 0) return;
-
-  const payload = {
-    action: 'SCAN_TEXT',
-    url: window.location.href,
-    domain: window.location.hostname,
-    textSnippets: textSnippets.slice(0, 150), // Send up to 150 candidate snippets per batch
-  };
-
+  // Check if scanner is disabled globally
   try {
-    chrome.runtime.sendMessage(payload, (response) => {
+    chrome.storage.local.get(['scannerEnabled'], (result) => {
       if (chrome.runtime.lastError) {
-        console.warn('⚠️ Extension runtime message error:', chrome.runtime.lastError.message);
+        executeScan();
         return;
       }
-
-      if (response && response.success && response.data && response.data.results) {
-        handleScanResults(response.data.results, textNodeMap);
+      if (result.scannerEnabled === false) {
+        console.log('🛡️ [Dark Pattern Content Script] Scanner is disabled globally.');
+        return;
       }
+      executeScan();
     });
   } catch (err) {
-    console.error('❌ Failed to relay message to background service worker:', err);
+    executeScan();
+  }
+
+  function executeScan() {
+    const { textSnippets, textNodeMap } = extractPageTextSnippets();
+
+    if (textSnippets.length === 0) return;
+
+    const payload = {
+      action: 'SCAN_TEXT',
+      url: window.location.href,
+      domain: window.location.hostname,
+      textSnippets: textSnippets.slice(0, 150), // Send up to 150 candidate snippets per batch
+    };
+
+    try {
+      chrome.runtime.sendMessage(payload, (response) => {
+        if (chrome.runtime.lastError) {
+          console.warn('⚠️ Extension runtime message error:', chrome.runtime.lastError.message);
+          return;
+        }
+
+        if (response && response.success && response.data && response.data.results) {
+          handleScanResults(response.data.results, textNodeMap);
+        }
+      });
+    } catch (err) {
+      console.error('❌ Failed to relay message to background service worker:', err);
+    }
   }
 }
 
