@@ -45,7 +45,11 @@ export const TrendsLineChart = () => {
       setLoading(true);
       try {
         const res = await getTrends(range);
-        setData(res.series || []);
+        const mappedData = (res.trends || []).map((item) => ({
+          date: item.date,
+          count: item.darkPatternsDetected || 0,
+        }));
+        setData(mappedData);
       } catch (err) {
         console.error('Error fetching trends:', err);
       } finally {

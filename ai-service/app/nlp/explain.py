@@ -14,7 +14,7 @@ def map_label_to_response(
             "confidence": None
         }
 
-    label_str = id2label.get(str(label_id), "Not Dark Pattern")
+    label_str = id2label.get(label_id) or id2label.get(str(label_id)) or "Not Dark Pattern"
     label_lower = label_str.lower().strip()
     
     if "not dark pattern" in label_lower or "no dark pattern" in label_lower or label_id == 0:

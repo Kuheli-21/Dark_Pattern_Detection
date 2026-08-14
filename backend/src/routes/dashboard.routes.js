@@ -8,7 +8,7 @@ router.use(standardRateLimiter);
 router.use(requireAuth);
 
 router.get('/overview', dashboardController.getOverview);
-router.get('/scores', dashboardController.getWebsiteScores);
+router.get('/website-scores', dashboardController.getWebsiteScores);
 router.get('/trends', dashboardController.getTrends);
 
 module.exports = router;

@@ -46,19 +46,37 @@ websiteSchema.statics.upsertAndRecalculateScore = async function (domain, snippe
   const PRIOR_DETECTIONS = 1;
   const PRIOR_SCANS = 5;
 
-  let website = await this.findOne({ domain: normalizedDomain });
-
-  if (!website) {
-    website = new this({
-      domain: normalizedDomain,
-      totalScans: 0,
-      totalDetections: 0,
-    });
+  let website;
+  try {
+    website = await this.findOneAndUpdate(
+      { domain: normalizedDomain },
+      {
+        $inc: {
+          totalScans: snippetCount,
+          totalDetections: detectionCount,
+        },
+        $set: { lastScannedAt: new Date() },
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+  } catch (error) {
+    // If a duplicate key error happens due to concurrent upsert race, retry once
+    if (error.code === 11000) {
+      website = await this.findOneAndUpdate(
+        { domain: normalizedDomain },
+        {
+          $inc: {
+            totalScans: snippetCount,
+            totalDetections: detectionCount,
+          },
+          $set: { lastScannedAt: new Date() },
+        },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+    } else {
+      throw error;
+    }
   }
-
-  website.totalScans += snippetCount;
-  website.totalDetections += detectionCount;
-  website.lastScannedAt = new Date();
 
   const newScore = Math.min(
     100,

@@ -6,9 +6,10 @@ const Detection = require('../models/Detection');
  */
 const getOverview = async (req, res, next) => {
   try {
-    const [totalWebsites, websiteAgg, detectionAgg, topPatternTypes, recentDetections] =
+    const [totalWebsites, highRiskWebsites, websiteAgg, detectionAgg, topPatternTypes, recentDetections] =
       await Promise.all([
         Website.countDocuments(),
+        Website.countDocuments({ totalDetections: { $gt: 0 } }),
         Website.aggregate([
           {
             $group: {
@@ -37,6 +38,7 @@ const getOverview = async (req, res, next) => {
     return res.status(200).json({
       summary: {
         totalWebsitesScanned: totalWebsites,
+        highRiskWebsitesCount: highRiskWebsites,
         totalScansPerformed: stats.totalScans,
         totalDarkPatternsDetected: stats.totalDetections,
         averageRiskScore: Math.round(stats.avgRiskScore || 0),

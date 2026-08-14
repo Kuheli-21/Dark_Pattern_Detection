@@ -16,8 +16,9 @@ export const WebsiteRiskScores = () => {
       setLoading(true);
       try {
         const res = await getWebsiteScores();
-        setItems(res.items || []);
-        setTotal(res.total || 0);
+        setItems(res.websites || []);
+        setTotal(res.pagination?.total || 0);
+
       } catch (err) {
         console.error('Failed to fetch website scores:', err);
       } finally {

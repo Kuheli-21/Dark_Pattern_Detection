@@ -11,7 +11,7 @@ const scanSchema = z.object({
   textSnippets: z
     .array(z.string())
     .min(1, 'textSnippets must contain at least one text item')
-    .max(100, 'Cannot process more than 100 text snippets per scan'),
+    .max(200, 'Cannot process more than 200 text snippets per scan'),
 });
 
 module.exports = {

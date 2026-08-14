@@ -84,8 +84,18 @@ export const History = () => {
           page,
           limit,
         });
-        setItems(res.items || []);
-        setTotal(res.total || 0);
+        setItems(
+          (res.detections || []).map((det) => ({
+            id: det._id,
+            snippet: det.snippetText || '',
+            domain: det.websiteId?.domain || 'unknown',
+            confidence: det.confidence,
+            timestamp: det.createdAt,
+            url: det.sourceUrl || '#',
+          }))
+        );
+        setTotal(res.pagination?.total || 0);
+
       } catch (err) {
         console.error('Failed to fetch detection history:', err);
       } finally {
@@ -103,7 +113,9 @@ export const History = () => {
     } else {
       newParams.delete(key);
     }
-    newParams.set('page', '1'); // Reset to page 1 on filter update
+    if (key !== 'page') {
+      newParams.set('page', '1'); // Reset to page 1 on filter update
+    }
     setSearchParams(newParams);
   };
 
@@ -349,7 +361,7 @@ export const History = () => {
         }}
       >
         <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-          Showing {items.length > 0 ? (page - 1) * limit + 1 : 0} to Math.min({page * limit}, {total}) of {total} records
+          Showing {items.length > 0 ? (page - 1) * limit + 1 : 0} to {Math.min(page * limit, total)} of {total} records
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>

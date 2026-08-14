@@ -4,16 +4,30 @@ import { loginApi, signupApi, logoutApi, refreshTokenApi } from '../api/auth.api
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState({ email: 'analyst@darkpattern.ai', name: 'Cyber Analyst' });
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Initial silent refresh on app boot - bypassed for absolute mock mode
+  // Initial silent refresh on app boot
   useEffect(() => {
-    setLoading(false);
+    const initAuth = async () => {
+      try {
+        await refreshTokenApi();
+        const storedUser = localStorage.getItem('user');
+        setUser(storedUser ? JSON.parse(storedUser) : { email: 'user@example.com', name: 'Cyber Analyst' });
+      } catch (err) {
+        setUser(null);
+        localStorage.removeItem('user');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initAuth();
 
     const handleLogoutEvent = () => {
       setUser(null);
+      localStorage.removeItem('user');
     };
 
     window.addEventListener('auth:logout', handleLogoutEvent);
@@ -24,7 +38,9 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const data = await loginApi(email, password);
-      setUser(data.user || { email, name: 'Cyber Analyst' });
+      const userProfile = data.user || { email, name: 'Cyber Analyst' };
+      localStorage.setItem('user', JSON.stringify(userProfile));
+      setUser(userProfile);
       return data;
     } catch (err) {
       const msg = err.response?.data?.message || 'Login failed. Please check credentials.';
@@ -37,7 +53,9 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const data = await signupApi(email, password);
-      setUser(data.user || { email, name: 'Cyber Analyst' });
+      const userProfile = data.user || { email, name: 'Cyber Analyst' };
+      localStorage.setItem('user', JSON.stringify(userProfile));
+      setUser(userProfile);
       return data;
     } catch (err) {
       const msg = err.response?.data?.message || 'Signup failed. Please try again.';
@@ -51,6 +69,7 @@ export const AuthProvider = ({ children }) => {
       await logoutApi();
     } finally {
       setUser(null);
+      localStorage.removeItem('user');
     }
   };
 

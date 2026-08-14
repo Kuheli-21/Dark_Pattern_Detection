@@ -61,6 +61,14 @@ function extractPageTextSnippets() {
  * Trigger DOM scanning and dispatch snippets to service worker background script
  */
 function runDOMScan() {
+  const hostname = window.location.hostname;
+  const port = window.location.port;
+  
+  // Exclude the local telemetry dashboard to avoid recursive scanning loops
+  if ((hostname === 'localhost' || hostname === '127.0.0.1') && port === '5173') {
+    return;
+  }
+  
   const { textSnippets, textNodeMap } = extractPageTextSnippets();
 
   if (textSnippets.length === 0) return;

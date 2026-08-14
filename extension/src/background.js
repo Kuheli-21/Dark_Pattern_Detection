@@ -40,7 +40,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               url,
               domain,
               results: scanData.results,
-              websiteRiskScore: scanData.websiteRiskScore,
+              websiteRiskScore: scanData.riskScore !== undefined ? scanData.riskScore : scanData.websiteRiskScore,
               flaggedCount,
               timestamp: Date.now(),
             },

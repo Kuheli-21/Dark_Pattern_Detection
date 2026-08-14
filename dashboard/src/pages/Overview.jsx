@@ -18,6 +18,8 @@ export const Overview = () => {
   const [stats, setStats] = useState({
     totalScans: 9840,
     totalDetections: 2819,
+    totalWebsitesScanned: 10,
+    highRiskWebsites: 0,
     topPatternTypes: [{ type: 'dark-pattern', count: 2819, percentage: 100 }],
     recentActivity: [],
   });
@@ -27,7 +29,24 @@ export const Overview = () => {
     const fetchOverview = async () => {
       try {
         const data = await getOverviewStats();
-        setStats((prev) => ({ ...prev, ...data }));
+        if (data && data.summary) {
+          setStats((prev) => ({
+            ...prev,
+            totalScans: data.summary.totalScansPerformed || 0,
+            totalDetections: data.summary.totalDarkPatternsDetected || 0,
+            totalWebsitesScanned: data.summary.totalWebsitesScanned || 0,
+            highRiskWebsites: data.summary.highRiskWebsitesCount || 0,
+            topPatternTypes: data.topPatternTypes || [],
+            recentActivity: (data.recentDetections || []).map((act) => ({
+              id: act._id,
+              domain: act.websiteId?.domain || 'unknown',
+              snippet: act.snippetText || '',
+              confidence: act.confidence,
+              timestamp: act.createdAt,
+              url: act.sourceUrl || '#',
+            })),
+          }));
+        }
       } catch (err) {
         console.error('Failed to fetch overview data:', err);
       } finally {
@@ -40,6 +59,9 @@ export const Overview = () => {
 
   const cleanScans = Math.max(0, stats.totalScans - stats.totalDetections);
   const detectionPercentage = ((stats.totalDetections / Math.max(1, stats.totalScans)) * 100).toFixed(1);
+  const topDomain = stats.highRiskWebsites > 0 && stats.recentActivity.length > 0 
+    ? stats.recentActivity[0].domain 
+    : 'None';
 
   return (
     <motion.div
@@ -273,10 +295,10 @@ export const Overview = () => {
               WebkitTextFillColor: 'transparent'
             }}
           >
-            10 Flagged
+            {stats.highRiskWebsites} Flagged
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', color: '#94a3b8' }}>
-            <span>Top target: Temu & Booking.com</span>
+            <span>Top target: {topDomain}</span>
           </div>
         </motion.div>
       </motion.div>
